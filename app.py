@@ -65,10 +65,10 @@ def predict_age_gender():
 
     for embedding in tqdm(embeddings):
         embedding = embedding.reshape(1, 512)
-        gender_mean, gender_entropy = forward_mc(models["gender"], embedding)
-        age_mean, age_entropy = forward_mc(models["age"], embedding)
-        gender = {"m": 1 - gender_mean, "f": gender_mean, "entropy": gender_entropy}
-        age = {"mean": age_mean, "entropy": age_entropy}
+        gender_mean, gender_entropy, gender_output, gender_preds = forward_mc(models["gender"], embedding)
+        age_mean, age_entropy, age_output, age_preds = forward_mc(models["age"], embedding)
+        gender = {"m": 1 - gender_mean, "f": gender_mean, "entropy": gender_entropy, "output": gender_output, "pred": gender_preds}
+        age = {"mean": age_mean, "entropy": age_entropy, "output": age_output, "pred": age_preds}
 
         genders.append(gender)
         ages.append(age)
