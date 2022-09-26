@@ -10,6 +10,8 @@ from tqdm import tqdm
 from model.model import ResMLP
 from utils import enable_dropout, forward_mc, read_json
 
+from flask_ngrok import run_with_ngrok
+
 logging.basicConfig(
     level=logging.DEBUG,
     format="%(asctime)s.%(msecs)03d %(levelname)s %(module)s - %(funcName)s: %(message)s",
@@ -18,6 +20,7 @@ logging.basicConfig(
 
 # a light-weight flask app
 app = Flask(__name__)
+run_with_ngrok(app)   #starts ngrok when the app is run
 
 models = {"age": None, "gender": None}
 
@@ -67,8 +70,15 @@ def predict_age_gender():
         embedding = embedding.reshape(1, 512)
         gender_mean, gender_entropy, gender_output, gender_preds = forward_mc(models["gender"], embedding)
         age_mean, age_entropy, age_output, age_preds = forward_mc(models["age"], embedding)
-        gender = {"m": 1 - gender_mean, "f": gender_mean, "entropy": gender_entropy, "output": gender_output, "pred": gender_preds}
-        age = {"mean": age_mean, "entropy": age_entropy, "output": age_output, "pred": age_preds}
+        gender = {  "m": 1 - gender_mean, 
+                    "f": gender_mean, 
+                    "entropy": gender_entropy, 
+                    "output": gender_output, 
+                    "pred": gender_preds}
+        age = { "mean": age_mean, 
+                "entropy": age_entropy, 
+                "output": age_output, 
+                "pred": age_preds}
 
         genders.append(gender)
         ages.append(age)
@@ -76,6 +86,9 @@ def predict_age_gender():
     app.logger.debug(f"gender and age extracted!")
 
     response = {"ages": ages, "genders": genders}
+
+    print("AGES\n", ages)
+    print("GENDERS\n", genders)
 
     response_pickled = jsonpickle.encode(response)
     app.logger.info("json-pickle is done.")

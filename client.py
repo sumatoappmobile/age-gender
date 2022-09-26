@@ -158,8 +158,8 @@ def run_image(url_face: str, url_age_gender: str, image_path: str):
         binary_image, url_face, url_age_gender
     )
     
-    print(genders)
-    print(ages)
+    print(genders[0].keys())
+    print(ages[0].keys())
     
     image = Image.open(image_path)
 

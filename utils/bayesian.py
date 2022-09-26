@@ -29,7 +29,6 @@ def forward_mc(
         else:
             outputs = model(embedding)
 
-        outputs_models = outputs.copy()
         outputs = F.softmax(outputs, dim=1)
         outputs = outputs.detach().cpu().numpy()
 
@@ -46,7 +45,7 @@ def forward_mc(
     # MAXIMUM_ENTROPY = {'gender': 0.6931471805599453,
     #                    'age': 4.615120516841261}
 
-    return expectation, entropy, outputs_models, preds
+    return expectation, entropy, outputs, preds
 
 
 def enable_dropout(model):
